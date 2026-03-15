@@ -1,0 +1,215 @@
+models:
+  - model_id: cvpr2024_mobilenet_v3_small
+    display_name: CVPR2024 MobileNetV3 Small
+    paper_title: Joint Physical-Digital Facial Attack Detection Via Simulating Spoofing Clues
+    paper_year: 2024
+    paper_type: official_paper_implementation
+    repository_url: https://github.com/Xianhua-He/cvpr2024-face-anti-spoofing-challenge
+    weights_source: google_drive_public_checkpoint
+    attack_track: general_physical_digital_fas
+    input_type: image
+    ready_status: ready
+    implementation_status: actual
+    score_semantics: spoof_probability
+    threshold_default: 0.50
+    preprocessing:
+      face_detector: none
+      alignment_used: false
+      crop_strategy: full_image_resize
+      input_size: "224x224"
+      normalization_scheme: imagenet_rgb
+      preprocess_source: repository_test_pipeline
+
+  - model_id: stdn_eccv2020
+    display_name: STDN ECCV 2020
+    paper_title: On Disentangling Spoof Trace for Generic Face Anti-Spoofing
+    paper_year: 2020
+    paper_type: official_paper_implementation
+    repository_url: https://github.com/yaojieliu/ECCV20-STDN
+    weights_source: repository_embedded_tensorflow_checkpoint
+    attack_track: general_physical_digital_fas
+    input_type: image
+    ready_status: ready
+    implementation_status: actual
+    score_semantics: logit_spoof
+    threshold_default: 0.50
+    runtime:
+      strategy: subprocess_tensorflow_compat
+      python_bin_env: STDN_PYTHON_BIN
+      repo_dir: third_party/ECCV20-STDN
+      checkpoint_dir: backend/assets/stdn_eccv2020
+      runner_script: backend/app/external/stdn_subprocess_runner.py
+    preprocessing:
+      face_detector: user_supplied_face_crop
+      alignment_used: false
+      crop_strategy: pre_cropped_face_required
+      input_size: "official_test_py_resizes_to_256x256"
+      normalization_scheme: zero_to_one
+      preprocess_source: official_test_py_with_face_cropped_input
+
+  - model_id: iadg_cvpr2023
+    display_name: IADG CVPR 2023
+    paper_title: Instance-Aware Domain Generalization for Face Anti-Spoofing
+    paper_year: 2023
+    paper_type: official_paper_implementation
+    repository_url: https://github.com/qianyuzqy/IADG
+    weights_source: google_drive_public_checkpoint
+    attack_track: general_physical_digital_fas
+    input_type: image
+    ready_status: ready
+    implementation_status: actual
+    score_semantics: real_probability
+    threshold_default: 0.8337
+    runtime:
+      repo_dir: third_party/IADG
+      checkpoint_path: backend/assets/iadg/OCI2M/model_best.pth.tar
+      config_path: third_party/IADG/configs/OCI2M_test.yaml
+    preprocessing:
+      face_detector: opencv_haar
+      alignment_used: false
+      crop_strategy: bbox_margin_crop_approximation
+      input_size: "256x256"
+      normalization_scheme: mean_std_0.5
+      preprocess_source: official_OCI2M_test_config_with_service_bbox_detection
+      service_margin: 0.3
+
+  - model_id: hifimask_iccvw2021
+    display_name: HiFiMask ICCVW 2021 Baseline
+    paper_title: 3D High-Fidelity Mask Face Presentation Attack Detection Challenge
+    paper_year: 2021
+    paper_type: official_paper_implementation
+    repository_url: https://github.com/feascr/3d-mask-pad-iccv2021
+    weights_source: public_code_only
+    attack_track: 3d_specialized
+    input_type: image
+    ready_status: research_only
+    implementation_status: mock
+    score_semantics: spoof_probability
+    threshold_default: 0.55
+    preprocessing:
+      face_detector: retinaface
+      alignment_used: true
+      crop_strategy: aligned_face_crop
+      input_size: "224x224"
+      normalization_scheme: imagenet_like
+      preprocess_source: repository_readme
+    score_profile:
+      contrast_weight: 0.50
+      edge_weight: 0.30
+      brightness_weight: 0.20
+      bias: 0.08
+
+  - model_id: visionlabs_chalearn_2021
+    display_name: VisionLabs ChaLearn 2021
+    paper_title: 3D High-Fidelity Mask Face Presentation Attack Detection Challenge
+    paper_year: 2021
+    paper_type: paper_based_reimplementation
+    repository_url: https://github.com/AlexanderParkin/chalearn_3d_hifi
+    weights_source: public_code_only
+    attack_track: 3d_specialized
+    input_type: image
+    ready_status: research_only
+    implementation_status: mock
+    score_semantics: logit_spoof
+    threshold_default: 0.50
+    preprocessing:
+      face_detector: custom_face_crop
+      alignment_used: true
+      crop_strategy: challenge_face_crop
+      input_size: "256x256"
+      normalization_scheme: challenge_specific
+      preprocess_source: challenge_solution
+    score_profile:
+      contrast_weight: 0.35
+      edge_weight: 0.45
+      brightness_weight: 0.20
+      bias: -0.05
+
+  - model_id: deep_dynamic_textures_tifs2019
+    display_name: Deep Dynamic Textures TIFS 2019
+    paper_title: Joint Discriminative Learning of Deep Dynamic Textures for 3D Mask Face Anti-Spoofing
+    paper_year: 2019
+    paper_type: official_paper_implementation
+    repository_url: https://github.com/rshaojimmy/Deep-Dynamic-Textures
+    weights_source: public_code_only
+    attack_track: 3d_specialized
+    input_type: image
+    ready_status: research_only
+    implementation_status: mock
+    score_semantics: real_probability
+    threshold_default: 0.45
+    preprocessing:
+      face_detector: matlab_preprocess
+      alignment_used: false
+      crop_strategy: dynamic_texture_window
+      input_size: "128x128"
+      normalization_scheme: grayscale_texture
+      preprocess_source: repository_readme
+    score_profile:
+      contrast_weight: 0.60
+      edge_weight: 0.25
+      brightness_weight: 0.15
+      bias: 0.02
+
+  - model_id: team_highc_iccvw2021
+    display_name: Team HighC ICCVW 2021
+    paper_title: 3D High-Fidelity Mask Face Presentation Attack Detection Challenge
+    paper_year: 2021
+    paper_type: paper_based_reimplementation
+    repository_url: https://github.com/SeaRecluse/Chalearn-3D-High-Fidelity-Mask-Face-Presentation-Attack-Detection-Challenge-ICCV2021-Team-HighC
+    weights_source: public_code_only
+    attack_track: 3d_specialized
+    input_type: image
+    ready_status: research_only
+    implementation_status: planned
+    score_semantics: spoof_probability
+    threshold_default: 0.50
+    preprocessing:
+      face_detector: retinaface
+      alignment_used: true
+      crop_strategy: aligned_face_crop
+      input_size: "224x224"
+      normalization_scheme: shufflenet_specific
+      preprocess_source: repository_readme
+
+  - model_id: rppg_eccv2018
+    display_name: rPPG ECCV 2018
+    paper_title: Remote Photoplethysmography Correspondence Feature for 3D Mask Face Presentation Attack Detection
+    paper_year: 2018
+    paper_type: paper_based_reimplementation
+    repository_url: https://github.com/shicaiwei123/anti-spoofing-of-rppg
+    weights_source: public_code_only
+    attack_track: 3d_specialized
+    input_type: video
+    ready_status: video_only
+    implementation_status: planned
+    score_semantics: spoof_probability
+    threshold_default: 0.50
+    preprocessing:
+      face_detector: landmark_tracking
+      alignment_used: true
+      crop_strategy: temporal_face_roi
+      input_size: "sequence"
+      normalization_scheme: temporal_rppg
+      preprocess_source: paper_and_repository
+
+  - model_id: biometric_lab_transformer
+    display_name: Biometric Lab Transformer
+    paper_title: Hugging Face Antispoofing Model Card
+    paper_year: 2025
+    paper_type: paper_unconfirmed
+    repository_url: https://huggingface.co/biometric-ai-lab/Antispoofing
+    weights_source: huggingface_model_card
+    attack_track: 3d_specialized
+    input_type: image
+    ready_status: ready
+    implementation_status: actual
+    score_semantics: spoof_probability
+    threshold_default: 0.50
+    preprocessing:
+      face_detector: yolo_face
+      alignment_used: false
+      crop_strategy: detected_face_crop
+      input_size: "224x224 x 10 duplicated frames"
+      normalization_scheme: imagenet_sequence
+      preprocess_source: local_downloaded_inference

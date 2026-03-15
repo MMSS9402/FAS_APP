@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAS_APP</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div>
+          <h1>FAS_APP</h1>
+          <p class="subtitle">3D 마스크 특화 FAS와 일반 FAS를 함께 비교하는 도구</p>
+        </div>
+        <span class="track-badge">3D 특화 + 일반 FAS</span>
+      </header>
+
+      <section class="notice">
+        <strong>현재 상태:</strong>
+        현재 실제 체크포인트로 동작하는 모델은 <code>biometric_lab_transformer</code>, <code>cvpr2024_mobilenet_v3_small</code>, <code>stdn_eccv2020</code>, <code>iadg_cvpr2023</code> 4개입니다. All Models는 <code>ready</code> 상태 모델 전체를 실행하며, 여기에는 <code>3D 마스크 특화 FAS</code>와 <code>일반 FAS (물리·디지털 공격)</code>가 함께 포함될 수 있습니다.
+      </section>
+
+      <section class="grid two-column">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>이미지 업로드</h2>
+            <button id="clear-images" class="ghost-button" type="button">전체 비우기</button>
+          </div>
+          <label for="file-input" class="dropzone" id="dropzone">
+            <input id="file-input" type="file" multiple accept=".jpg,.jpeg,.png,.bmp" hidden />
+            <span>이미지를 드래그 앤 드롭하거나 클릭해서 선택하세요.</span>
+            <small>지원 형식: jpg, jpeg, png, bmp</small>
+          </label>
+          <div id="image-meta" class="meta-row">선택된 이미지가 없습니다.</div>
+          <div id="image-list" class="image-list"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2>모델 선택</h2>
+            <div class="inline-actions">
+              <button id="select-ready" class="ghost-button" type="button">All Models</button>
+              <button id="clear-models" class="ghost-button" type="button">선택 해제</button>
+            </div>
+          </div>
+          <div id="model-list" class="model-list"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="run-bar">
+          <button id="run-selected" class="primary-button" type="button">Run Selected Models</button>
+          <button id="run-all" class="secondary-button" type="button">Run All Models</button>
+          <button id="reset-state" class="ghost-button" type="button">Reset</button>
+          <span id="status-text" class="status-text">대기 중</span>
+        </div>
+      </section>
+
+      <section class="grid summary-grid" id="summary-grid">
+        <div class="summary-card"><span>총 이미지 수</span><strong id="summary-image-count">0</strong></div>
+        <div class="summary-card"><span>실행 모델 수</span><strong id="summary-model-count">0</strong></div>
+        <div class="summary-card"><span>성공 / 실패</span><strong id="summary-run-count">0 / 0</strong></div>
+        <div class="summary-card"><span>평균 처리 시간</span><strong id="summary-latency">0 ms</strong></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>결과 이미지</h2>
+          <div class="inline-actions">
+            <button id="export-csv" class="ghost-button" type="button">CSV Export</button>
+          </div>
+        </div>
+        <div id="response-notes" class="response-notes empty-state">실행 메모가 없습니다.</div>
+        <div id="results-gallery" class="results-gallery empty-state">아직 실행 결과가 없습니다.</div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>결과 테이블</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Model</th>
+                <th>Track</th>
+                <th>Runtime</th>
+                <th>Paper</th>
+                <th>Year</th>
+                <th>Label</th>
+                <th>Raw Score</th>
+                <th>Norm Score</th>
+                <th>Threshold</th>
+                <th>Latency</th>
+                <th>Status</th>
+                <th>Decision Guide</th>
+                <th>Preprocessing</th>
+              </tr>
+            </thead>
+            <tbody id="results-table-body">
+              <tr>
+                <td colspan="14" class="table-empty">실행 결과가 없습니다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

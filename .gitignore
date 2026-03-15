@@ -1,0 +1,36 @@
+.DS_Store
+Thumbs.db
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+.readme_test_venv/
+.stdn_py37/
+
+# Local tool caches
+.hf-cache/
+.gdown-home/
+
+# Environment files
+.env
+.env.*
+
+# IDE
+.idea/
+.vscode/
+
+# Runtime output
+*.log
+*.tmp
+*.temp
+
+# External repositories and downloaded assets
+third_party/
+backend/assets/
+
