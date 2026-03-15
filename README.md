@@ -39,9 +39,11 @@ FAS_APP/
 ```
 
 ## 빠른 시작
-### 1. 프로젝트 루트로 이동
+### 1. 저장소 clone 및 프로젝트 루트로 이동
 ```bash
-cd /home/mmss9402/source/suprema/FAS_APP
+git clone https://github.com/MMSS9402/FAS_APP.git
+cd FAS_APP
+export FAS_APP_ROOT="$(pwd)"
 ```
 
 ### 2. 메인 가상환경 생성 및 활성화
@@ -62,9 +64,9 @@ cd ..
 
 ### 5. 서버 실행
 ```bash
-cd /home/mmss9402/source/suprema/FAS_APP/backend
-STDN_PYTHON_BIN="/home/mmss9402/source/suprema/FAS_APP/.stdn_py37/bin/python" \
-"/home/mmss9402/source/suprema/FAS_APP/.venv/bin/python" -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+cd "$FAS_APP_ROOT/backend"
+STDN_PYTHON_BIN="/absolute/path/to/stdn_py37/bin/python" \
+"$FAS_APP_ROOT/.venv/bin/python" -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
 브라우저 주소:
@@ -85,7 +87,7 @@ http://127.0.0.1:8000
 소스: Hugging Face `biometric-ai-lab/Antispoofing`
 
 ```bash
-cd /home/mmss9402/source/suprema/FAS_APP
+cd "$FAS_APP_ROOT"
 mkdir -p backend/assets/biometric_ai_lab
 python -c "from huggingface_hub import hf_hub_download; repo='biometric-ai-lab/Antispoofing'; files=['antispoofing_full.pth','inference.py','yolov8s-face-lindevs.onnx']; [print(hf_hub_download(repo_id=repo, filename=f, local_dir='backend/assets/biometric_ai_lab', local_dir_use_symlinks=False)) for f in files]"
 ```
@@ -93,20 +95,25 @@ python -c "from huggingface_hub import hf_hub_download; repo='biometric-ai-lab/A
 ### 2. CVPR2024 MobileNetV3 Small
 소스: GitHub `Xianhua-He/cvpr2024-face-anti-spoofing-challenge`
 
-1. 저장소 README의 Google Drive 링크에서 `mobilenet_v3_small.pth`를 수동 다운로드합니다.
-2. 아래 위치로 옮깁니다.
+1. 외부 저장소를 clone 합니다.
+2. 저장소 README의 Google Drive 링크에서 `mobilenet_v3_small.pth`를 수동 다운로드합니다.
+3. 아래 위치로 옮깁니다.
 
 ```bash
-cd /home/mmss9402/source/suprema/FAS_APP
+cd "$FAS_APP_ROOT"
+git clone https://github.com/Xianhua-He/cvpr2024-face-anti-spoofing-challenge third_party/cvpr2024-face-anti-spoofing-challenge
 mkdir -p backend/assets/cvpr2024_general_fas
 mv "/path/to/mobilenet_v3_small.pth" backend/assets/cvpr2024_general_fas/mobilenet_v3_small.pth
 ```
+
+중요:
+- 이 모델은 checkpoint 파일만으로는 동작하지 않고, `third_party/cvpr2024-face-anti-spoofing-challenge` 코드가 같이 있어야 합니다.
 
 ### 3. IADG CVPR 2023
 소스: GitHub `qianyuzqy/IADG`
 
 ```bash
-cd /home/mmss9402/source/suprema/FAS_APP
+cd "$FAS_APP_ROOT"
 git clone https://github.com/qianyuzqy/IADG third_party/IADG
 mkdir -p backend/assets/iadg
 python -m gdown --folder "https://drive.google.com/drive/folders/15QjIXXbatQmXzwtR7pydsB4Jqscm7Vb6?usp=sharing" -O backend/assets/iadg
@@ -122,7 +129,7 @@ python -m gdown --folder "https://drive.google.com/drive/folders/15QjIXXbatQmXzw
 
 체크포인트 준비:
 ```bash
-cd /home/mmss9402/source/suprema/FAS_APP
+cd "$FAS_APP_ROOT"
 mkdir -p third_party
 git clone https://github.com/yaojieliu/ECCV20-STDN third_party/ECCV20-STDN
 mkdir -p backend/assets/stdn_eccv2020
@@ -141,7 +148,7 @@ pip install tensorflow==1.13.1 pillow numpy opencv-python matplotlib
 
 STDN 외부 Python 지정:
 ```bash
-export STDN_PYTHON_BIN="$HOME/anaconda3/envs/stdn_py37/bin/python"
+export STDN_PYTHON_BIN="/absolute/path/to/stdn_py37/bin/python"
 ```
 
 중요:
@@ -161,9 +168,10 @@ curl http://127.0.0.1:8000/api/models
 
 ### 전체 실제 모델 smoke test
 ```bash
-cd /home/mmss9402/source/suprema/FAS_APP/backend
-STDN_PYTHON_BIN="/home/mmss9402/source/suprema/FAS_APP/.stdn_py37/bin/python" \
-python -c "from PIL import Image; from app.services.model_registry import get_registry; from app.services.inference_runner import InferenceRunner; import json; registry=get_registry(); runner=InferenceRunner(registry); image=Image.open('/home/mmss9402/source/suprema/FAS_APP/backend/assets/test_images/lena.jpg').convert('RGB'); result=runner.run_for_image(image, 'lena.jpg', ['biometric_lab_transformer','cvpr2024_mobilenet_v3_small','stdn_eccv2020','iadg_cvpr2023']); print(json.dumps(result, ensure_ascii=False, indent=2))"
+cd "$FAS_APP_ROOT/backend"
+export IMAGE_PATH="/absolute/path/to/your/test_image.jpg"
+STDN_PYTHON_BIN="$STDN_PYTHON_BIN" \
+python -c "from PIL import Image; from app.services.model_registry import get_registry; from app.services.inference_runner import InferenceRunner; import json, os; registry=get_registry(); runner=InferenceRunner(registry); image_path=os.environ['IMAGE_PATH']; image=Image.open(image_path).convert('RGB'); result=runner.run_for_image(image, os.path.basename(image_path), ['biometric_lab_transformer','cvpr2024_mobilenet_v3_small','stdn_eccv2020','iadg_cvpr2023']); print(json.dumps(result, ensure_ascii=False, indent=2))"
 ```
 
 정상 기준:
